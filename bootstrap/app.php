@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\RedirectIfAuthenticated::class,
             \App\Http\Middleware\AuthMiddleware::class,
         ]);
+
+        // Alias cho route middleware
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminOnlyMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

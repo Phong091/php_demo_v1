@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\JwtService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,22 +21,37 @@ class AuthMiddleware
             'login',
             'register',
             'forgot-password',
+            'logout',
         ];
         $path = ltrim($request->path(), '/');
         if ($path === '' || in_array($path, $guestPaths, true) || str_starts_with($path, 'reset-password')) {
             return $next($request);
         }
 
-        $userId = $request->session()->get('user_id');
-
-        // Restore session từ remember cookie nếu có
-        if (!$userId && $request->hasCookie('remember_user')) {
-            $userId = $request->cookie('remember_user');
-            $request->session()->put('user_id', $userId);
+        $token = $request->bearerToken() ?: $request->cookie('token');
+        if (!$token) {
+            return redirect('/login');
+        }
+        try {
+            $jwt = JwtService::fromConfig()->verifyAndDecode($token);
+        } catch (\Throwable $e) {
+            return redirect('/login');
         }
 
-        if (!$userId) {
-            return redirect('/login');
+        $userId = (int)($jwt->sub ?? 0);
+        $userRole = (int)($jwt->role ?? 1);
+
+        $request->attributes->set('user_id', $userId);
+        $request->attributes->set('user_role', $userRole);
+
+        if (str_starts_with($path, 'admin/')) {
+            if ($userRole !== 0) {
+                return redirect('/profile');
+            }
+        } else {
+            if ($userRole === 0) {
+                return redirect('/admin/profile');
+            }
         }
 
         return $next($request);

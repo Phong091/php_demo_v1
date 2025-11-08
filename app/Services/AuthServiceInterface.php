@@ -8,7 +8,7 @@ interface AuthServiceInterface
 {
     public function register(string $email, string $password): void;
 
-    public function authenticate(Request $request, string $email, string $password, bool $remember): bool;
+    public function authenticate(Request $request, string $email, string $password, bool $remember): ?object;
 
     public function getCurrentUser(int $userId): ?object;
 

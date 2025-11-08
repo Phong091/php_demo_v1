@@ -21,19 +21,12 @@ class AuthService implements AuthServiceInterface
         $this->users->create($email, $hashed, $salt);
     }
 
-    public function authenticate(Request $request, string $email, string $password, bool $remember): bool
+    public function authenticate(Request $request, string $email, string $password, bool $remember): ?object
     {
         $user = $this->users->findByEmail($email);
-        if (!$user) return false;
-        if (md5($password . $user->salt) !== $user->password) return false;
-
-        $request->session()->put('user_id', $user->id);
-
-        if ($remember) {
-            Cookie::queue('remember_user', $user->id, 60 * 24 * 30);
-        }
-
-        return true;
+        if (!$user) return null;
+        if (md5($password . $user->salt) !== $user->password) return null;
+        return $user;
     }
 
     public function getCurrentUser(int $userId): ?object

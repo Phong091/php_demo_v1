@@ -36,6 +36,7 @@ php artisan key:generate
 # DB_PASSWORD=root
 
 php artisan migrate
+php artisan db:seed --class=Database\\Seeders\\AdminUserSeeder
 exit
 ```
 
@@ -61,6 +62,24 @@ exit
 - Đường dẫn log: `storage/logs/laravel.log`.
 - Nếu cần, đảm bảo `.env` dùng cấu hình:
   - `MAIL_MAILER=log`
+
+## Xác thực JWT (token based)
+- Khi đăng nhập thành công, hệ thống phát hành JWT và lưu trong cookie `token` (HttpOnly).
+- Các trang cần đăng nhập (ví dụ `/profile`) sẽ kiểm tra JWT thay cho session.
+- Trang quản trị người dùng: `/admin/users` (chỉ role=0).
+
+### Cấu hình JWT
+Thêm vào `.env` (sẽ có mặc định nếu chưa đặt):
+```
+JWT_SECRET=b1946ac92492d2347c6235b4d2611184f1e3a92d7e94cb9e92a0d6d2f89f9a0c
+JWT_TTL_MINUTES=10080  # 7 ngày
+```
+Tạo chuỗi ngẫu nhiên có thể dùng: `php -r "echo bin2hex(random_bytes(32));"`
+
+### Tài khoản admin (seeder)
+- Email: `admin@example.com`
+- Mật khẩu: `Admin@1234`
+- Role: `0` (admin)
 
 ## Lệnh hữu ích
 ```powershell

@@ -25,6 +25,7 @@ class DbUserRepository implements UserRepositoryInterface
             'name' => '',
             'birthday' => null,
             'token' => null,
+            'role' => 1,
         ]);
     }
 
@@ -52,6 +53,11 @@ class DbUserRepository implements UserRepositoryInterface
             'password' => $passwordHash,
             'token' => null,
         ]);
+    }
+
+    public function listAll(): array
+    {
+        return DB::table('users')->orderByDesc('id')->get()->all();
     }
 }
 

@@ -20,16 +20,68 @@
         </div>
     @endif
 
-    <form action="/profile" method="POST" class="space-y-4">
+    <form action="/profile" method="POST" class="space-y-4" id="profile-form">
         @csrf
-        <input type="text" name="name" placeholder="Name" value="{{ $user->name }}" class="w-full border p-2 rounded">
-        <input type="date" name="birthday" placeholder="Birthday" value="{{ $user->birthday }}" class="w-full border p-2 rounded">
-        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Update</button>
+        <input 
+            type="text" 
+            name="name" 
+            placeholder="Name" 
+            value="{{ $user->name }}" 
+            class="w-full border p-2 rounded"
+        >
+        <input 
+            type="date" 
+            name="birthday" 
+            placeholder="Birthday" 
+            value="{{ $user->birthday }}" 
+            class="w-full border p-2 rounded"
+        >
+        <button 
+            type="submit" 
+            id="submit-btn"
+            class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-700 hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+        >
+            Update
+        </button>
     </form>
 
-    <p class="mt-4 text-sm">
-        <a href="/logout" class="text-blue-500">Logout</a>
+    <p class="mt-4 text-sm" id="logout-link">
+        <a href="/logout" id="logout-btn" class="text-blue-500 hover:text-blue-700 transition-colors">Logout</a>
     </p>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('profile-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const logoutLink = document.getElementById('logout-link');
+    
+    form.addEventListener('submit', function(e) {
+        // Disable button và ẩn logout link
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Đang xử lý...';
+        logoutLink.classList.add('hidden');
+        
+        // Form sẽ submit bình thường (không preventDefault)
+    });
+    const logoutBtn = document.getElementById('logout-btn');
+
+    logoutBtn.addEventListener('click', function(e) {
+        // Ẩn form và các button
+        submitBtn.classList.add('hidden');
+        
+        // Đổi text logout
+        logoutBtn.textContent = 'Đang đăng xuất...';
+        
+        window.location.href = '/logout';
+    });
+    // Enable lại nếu có lỗi validation từ server
+    @if($errors->any())
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Update';
+        logoutLink.classList.remove('hidden');
+    @endif
+});
+</script>
 </body>
 </html>

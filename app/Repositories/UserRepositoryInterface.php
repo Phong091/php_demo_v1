@@ -12,6 +12,8 @@ interface UserRepositoryInterface
 
     public function updateProfile(int $id, ?string $name, $birthday): void;
 
+    public function listAll(): array;
+
     public function setResetToken(int $id, string $token): void;
 
     public function findByResetToken(string $token): ?object;

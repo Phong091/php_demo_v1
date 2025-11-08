@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\JwtService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,13 +24,16 @@ class RedirectIfAuthenticated
             return $next($request);
         }
 
-        // Đồng bộ logic với AuthMiddleware: khôi phục session từ cookie nếu có
-        if (!$request->session()->has('user_id') && $request->hasCookie('remember_user')) {
-            $request->session()->put('user_id', $request->cookie('remember_user'));
-        }
-
-        if ($request->session()->has('user_id')) {
-            return redirect('/profile');
+        // JWT: nếu có token hợp lệ thì redirect sang profile
+        $token = $request->bearerToken() ?: $request->cookie('token');
+        if ($token) {
+            try {
+                $jwt = JwtService::fromConfig()->verifyAndDecode($token);
+                $role = (int)($jwt->role ?? 1);
+                return $role === 0 ? redirect('/admin/profile') : redirect('/profile');
+            } catch (\Throwable $e) {
+                // ignore
+            }
         }
 
         return $next($request);
