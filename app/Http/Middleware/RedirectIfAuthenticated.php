@@ -16,6 +16,7 @@ class RedirectIfAuthenticated
             'login',
             'register',
             'forgot-password',
+            'logout',
         ];
         $path = ltrim($request->path(), '/');
         $isGuestRoute = ($path === '' || in_array($path, $guestPaths, true) || str_starts_with($path, 'reset-password'));
