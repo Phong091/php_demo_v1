@@ -157,21 +157,14 @@ class AuthController
     {
         $request->validate([
             'token' => 'required',
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'regex:/[a-z]/',
-                'regex:/[A-Z]/',
-                'regex:/[0-9]/',
-                'regex:/[@$!%*?&]/',
-                'confirmed'
-            ]
+            'password' => ['required','min:8','regex:/[A-Z]/','regex:/[a-z]/','regex:/[\W]/', 'confirmed'],
         ], [
-            'token.required' => 'Thiếu token đặt lại mật khẩu.',
-            'password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'email.required' => 'Vui lòng nhập email.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.unique' => 'Email đã được sử dụng.',
+            'password.required' => 'Vui lòng nhập mật khẩu.',
             'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            'password.regex' => 'Mật khẩu phải có đủ: ít nhất 1 chữ thường, 1 chữ hoa, 1 số và 1 ký tự đặc biệt (@$!%*?&).',
+            'password.regex' => 'Mật khẩu phải có ít nhất 1 chữ hoa, 1 chữ thường và 1 ký tự đặc biệt.',
             'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
         ]);
 

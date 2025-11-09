@@ -18,7 +18,7 @@
         @csrf
         <input type="email" name="email" placeholder="Email" required class="w-full border p-2 rounded">
         <input type="password" name="password" placeholder="Password" required class="w-full border p-2 rounded">
-        <div class="flex items-center">
+        <div class="flex items-center" id="remember-container">
             <input type="checkbox" name="remember" id="remember" class="mr-2">
             <label for="remember" class="text-sm">Remember me</label>
         </div>
@@ -43,14 +43,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submit-btn');
     const navLinks = document.getElementById('nav-links');
     const ajaxError = document.getElementById('ajaxError');
+    const rememberCheckbox = document.getElementById('remember');
+    const rememberContainer = document.getElementById('remember-container');
     
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
         
         // Disable button và ẩn links
         submitBtn.disabled = true;
+        rememberCheckbox.disabled = true;
         submitBtn.textContent = 'Đang xử lý...';
         navLinks.classList.add('hidden');
+        rememberContainer.classList.add('opacity-50');
         ajaxError.classList.add('hidden');
         
         const data = new FormData(form);
@@ -100,8 +104,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Enable lại button và hiện links khi có lỗi
             submitBtn.disabled = false;
+            rememberCheckbox.disabled = false;
             submitBtn.textContent = 'Login';
             navLinks.classList.remove('hidden');
+            rememberContainer.classList.remove('opacity-50');
             
         } catch (error) {
             ajaxError.textContent = 'Có lỗi xảy ra. Vui lòng thử lại.';
@@ -109,8 +115,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Enable lại button và hiện links khi có lỗi
             submitBtn.disabled = false;
+            rememberCheckbox.disabled = false;
             submitBtn.textContent = 'Login';
             navLinks.classList.remove('hidden');
+            rememberContainer.classList.remove('opacity-50');
         }
     });
 });
